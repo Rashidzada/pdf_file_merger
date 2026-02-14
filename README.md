@@ -2,6 +2,8 @@
 
 An offline-first, browser-based PDF merging utility. Built with vanilla HTML, CSS, and JavaScript.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRashidzada%2Fpdf_file_merger)
+
 ## Features
 - **Drag & Drop**: Easily add multiple PDF files.
 - **Reorder**: Drag and drop files in the list to change their order.
