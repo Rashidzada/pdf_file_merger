@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Offline-first PDF Merger Tool. Merge multiple PDF files into one directly in your browser.">
+    <title>PDF Merger Tool</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <!-- Inline minimal SVG icons -->
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <svg class="icon pdf-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor"
+                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14v14M12 7l-5 5h3v4h4v-4h3l-5-5z" />
+                </svg>
+                <h1>PDF Merger Tool</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel: Files -->
+            <section class="file-manager">
+                <!-- Drop Zone -->
+                <div id="drop-zone" class="drop-zone">
+                    <div class="drop-content">
+                        <svg class="icon upload-icon" viewBox="0 0 24 24" width="48" height="48">
+                            <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
+                        </svg>
+                        <p>Drag & Drop PDF or Image files here</p>
+                        <span class="or-divider">or</span>
+                        <button id="browse-btn" class="btn btn-secondary">Browse Files</button>
+                        <input type="file" id="file-input" accept="application/pdf,image/png,image/jpeg" multiple
+                            hidden>
+                    </div>
+                </div>
+
+                <!-- File List -->
+                <div class="file-list-container">
+                    <div class="list-header">
+                        <h2>Files to Merge <span id="file-count" class="badge">0</span></h2>
+                        <button id="clear-all-btn" class="btn btn-text text-danger" disabled>Clear All</button>
+                    </div>
+                    <ul id="file-list" class="file-list">
+                        <!-- File items will be injected here -->
+                        <li class="file-list-empty">
+                            <p>No files selected yet.</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Right Panel: Actions -->
+            <aside class="actions-panel">
+                <div class="panel-section">
+                    <h3>Merge Settings</h3>
+                    <p class="text-sm text-muted">Files will be merged in the order shown.</p>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="owner-name" class="text-sm font-medium">Owner Name (Optional)</label>
+                        <input type="text" id="owner-name" class="form-input" placeholder="e.g. John Doe"
+                            style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="page-size" class="text-sm font-medium">Image Page Size</label>
+                        <select id="page-size" class="form-input"
+                            style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="a4">A4 (595 x 842 pt)</option>
+                            <option value="letter">Letter (612 x 792 pt)</option>
+                            <option value="legal">Legal (612 x 1008 pt)</option>
+                            <option value="a3">A3 (842 x 1191 pt)</option>
+                            <option value="a5">A5 (420 x 595 pt)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="panel-section actions">
+                    <button id="merge-btn" class="btn btn-primary btn-block" disabled>
+                        Merge Files
+                    </button>
+                </div>
+
+                <!-- Status & Progress -->
+                <div id="status-area" class="status-area hidden">
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p id="status-text" class="status-text">Ready</p>
+                </div>
+
+                <!-- Download Area -->
+                <div id="download-area" class="download-area hidden">
+                    <div class="success-message">
+                        <svg class="icon check-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                        <span>Merge Complete!</span>
+                    </div>
+                    <a id="download-link" href="#" class="btn btn-success btn-block" download>
+                        Download Merged PDF
+                    </a>
+                    <p id="file-info" class="file-info text-muted"></p>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="app-footer">
+            <p>Offline PDF Merger &copy; 2026. Processed locally in your browser.</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts (Ordered for Depedencies) -->
+    <!-- 1. Vendor -->
+    <script src="assets/vendor/pdf-lib.min.js"></script>
+
+    <!-- 2. Utils -->
+    <script src="assets/js/utils/dom.js"></script>
+    <script src="assets/js/utils/format.js"></script>
+    <script src="assets/js/utils/validate.js"></script>
+
+    <!-- 3. UI Components -->
+    <script src="assets/js/ui/toaster.js"></script>
+    <script src="assets/js/ui/listItem.js"></script>
+
+    <!-- 4. Services -->
+    <script src="assets/js/services/pdfMerge.service.js"></script>
+
+    <!-- 5. State -->
+    <script src="assets/js/state.js"></script>
+
+    <!-- 6. Main App Entry -->
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>
